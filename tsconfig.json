@@ -1,0 +1,23 @@
+{
+  "extends": "fastify-tsconfig",
+  "compilerOptions": {
+    "rootDir": ".",
+    "declaration": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": ["ESNext"],
+    "esModuleInterop": true,
+    "removeComments": true,
+    "allowSyntheticDefaultImports": true,
+    "incremental": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "sourceMap": true,
+    "outDir": "build"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "migrations", "mysql", ".vscode"]
+}
