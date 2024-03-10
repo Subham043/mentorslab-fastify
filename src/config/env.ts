@@ -7,6 +7,7 @@ const env = zennv({
     NODE_ENV: z.string().default('development'),
     API_PORT: z.number().default(8000),
     API_HOST: z.string().default('0.0.0.0'),
+    MAIL_URL: z.string().default('http://localhost:8000'),
     CLIENT_URL: z.string().default('http://localhost:3000'),
     DATABASE_HOST: z.string().default('localhost'),
     MYSQL_HOST: z.string().default('localhost'),
@@ -18,6 +19,7 @@ const env = zennv({
     MAIL_PORT: z.number(),
     MAIL_USERNAME: z.string(),
     MAIL_PASSWORD: z.string(),
+    JWT_KEY: z.string().default('supersecretkey'),
   }),
 });
 

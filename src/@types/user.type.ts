@@ -7,3 +7,7 @@ export type UserType = {
   role: 'user' | 'admin' | 'school';
   createdAt: Date;
 };
+
+export type AuthType = UserType & {
+  access_token: string;
+};

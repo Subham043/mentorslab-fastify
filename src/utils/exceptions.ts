@@ -26,3 +26,17 @@ export class CustomNotFoundError {
     };
   }
 }
+
+export class CustomInvalidRequestError {
+  readonly statusCode = 400;
+  readonly success = false;
+  private message = 'Not Found';
+  constructor(message: string) {
+    this.message = message;
+    throw {
+      statusCode: this.statusCode,
+      success: this.success,
+      message: this.message,
+    };
+  }
+}

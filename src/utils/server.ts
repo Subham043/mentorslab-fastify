@@ -2,6 +2,8 @@ import fastify from 'fastify';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import bcrypt from 'fastify-bcrypt';
+import jwt from '@fastify/jwt';
+import cookie from '@fastify/cookie';
 import mailer from 'fastify-mailer';
 import fastifyRequestLogger from '@mgcrea/fastify-request-logger';
 import { logger } from './logger';
@@ -10,10 +12,11 @@ import { helmetOptions } from '../constants/helmetOptions';
 import { userRoutes } from '../modules/user/user.routes';
 import { mailOptions } from '../constants/mailOptions';
 import { FastifyMailType } from '../@types/mail.type';
+import { authRoutes } from '../modules/auth/auth.routes';
+import env from '../config/env';
 
 declare module 'fastify' {
   interface FastifyInstance {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mailer: FastifyMailType;
   }
 }
@@ -57,6 +60,14 @@ export async function buildServer() {
 
   await server.register(fastifyRequestLogger);
 
+  await server.register(jwt, {
+    secret: env.JWT_KEY,
+  });
+
+  await server.register(cookie, {
+    secret: env.JWT_KEY,
+  });
+
   await server.register(mailer, mailOptions);
 
   await server.register(cors, corsOptions);
@@ -67,6 +78,7 @@ export async function buildServer() {
     saltWorkFactor: 12,
   });
 
+  await server.register(authRoutes, { prefix: '/api/auth' });
   await server.register(userRoutes, { prefix: '/api/users' });
 
   await server.ready();
