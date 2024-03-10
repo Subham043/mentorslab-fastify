@@ -2,6 +2,7 @@ import fastify from 'fastify';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import bcrypt from 'fastify-bcrypt';
+import fastifyRequestLogger from '@mgcrea/fastify-request-logger';
 import { logger } from './logger';
 import { corsOptions } from '../constants/corsOptions';
 import { helmetOptions } from '../constants/helmetOptions';
@@ -10,6 +11,7 @@ import { userRoutes } from '../modules/user/user.routes';
 export async function buildServer() {
   const server = await fastify({
     logger: logger,
+    disableRequestLogging: true,
     ajv: {
       customOptions: {
         allErrors: true,
@@ -28,7 +30,7 @@ export async function buildServer() {
             (element.instancePath.replace('/', '') as string)
         ] = element.message;
       });
-      reply.status(422).send({
+      reply.status(422).type('application/json').send({
         statusCode: 422,
         success: false,
         message: 'Bad Request',
@@ -36,9 +38,14 @@ export async function buildServer() {
       });
       return;
     }
-    reply.status(error.statusCode || 500).send({ ...error, success: false });
+    reply
+      .status(error.statusCode || 500)
+      .type('application/json')
+      .send({ ...error, success: false });
     return;
   });
+
+  await server.register(fastifyRequestLogger);
 
   await server.register(cors, corsOptions);
 

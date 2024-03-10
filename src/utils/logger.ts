@@ -8,6 +8,8 @@ export const logger = pino({
     options: {
       colorize: true,
       colorizeObjects: true,
+      translateTime: 'HH:MM:ss Z',
+      ignore: 'pid,hostname,plugin',
     },
   },
 });
