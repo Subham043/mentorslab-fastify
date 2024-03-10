@@ -1,9 +1,10 @@
-import fastify from 'fastify';
+import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import bcrypt from 'fastify-bcrypt';
 import jwt from '@fastify/jwt';
 import cookie from '@fastify/cookie';
+import auth from '@fastify/auth';
 import mailer from 'fastify-mailer';
 import fastifyRequestLogger from '@mgcrea/fastify-request-logger';
 import { logger } from './logger';
@@ -14,10 +15,16 @@ import { mailOptions } from '../constants/mailOptions';
 import { FastifyMailType } from '../@types/mail.type';
 import { authRoutes } from '../modules/auth/auth.routes';
 import env from '../config/env';
+import { PreHandlerHookDecoratorType, ServerErrorHandler, verifyJwtDecorator } from './decorator';
+import { UserType } from '../@types/user.type';
 
 declare module 'fastify' {
   interface FastifyInstance {
     mailer: FastifyMailType;
+    verifyJwt: PreHandlerHookDecoratorType;
+  }
+  interface FastifyRequest {
+    authenticatedUser: UserType | undefined;
   }
 }
 
@@ -33,30 +40,7 @@ export async function buildServer() {
     },
   });
 
-  server.setErrorHandler((error, request, reply) => {
-    if (error.validation && error.statusCode === 400) {
-      const result = {};
-      error.validation.forEach(element => {
-        result[
-          (element.params.missingProperty as string) ||
-            (element.params.format as string) ||
-            (element.instancePath.replace('/', '') as string)
-        ] = element.message;
-      });
-      reply.status(422).type('application/json').send({
-        statusCode: 422,
-        success: false,
-        message: 'Bad Request',
-        errors: result,
-      });
-      return;
-    }
-    reply
-      .status(error.statusCode || 500)
-      .type('application/json')
-      .send({ ...error, success: false });
-    return;
-  });
+  server.setErrorHandler((error, request, reply) => ServerErrorHandler(error, request, reply));
 
   await server.register(fastifyRequestLogger);
 
@@ -67,6 +51,12 @@ export async function buildServer() {
   await server.register(cookie, {
     secret: env.JWT_KEY,
   });
+
+  await server
+    .decorate('verifyJwt', (request: FastifyRequest, reply: FastifyReply, done) =>
+      verifyJwtDecorator(request, reply, done),
+    )
+    .register(auth);
 
   await server.register(mailer, mailOptions);
 

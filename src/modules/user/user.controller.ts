@@ -12,7 +12,7 @@ export async function listUsers(
   reply: FastifyReply,
 ) {
   const result = await list(request.query);
-  reply.code(200).type('application/json').send({
+  return reply.code(200).type('application/json').send({
     code: 200,
     success: true,
     message: 'Users Fetched',
@@ -34,7 +34,7 @@ export async function getUser(
   reply: FastifyReply,
 ): Promise<void> {
   const result = await findById(request.params);
-  reply.code(200).type('application/json').send({
+  return reply.code(200).type('application/json').send({
     code: 200,
     success: true,
     message: 'User Fetched',
@@ -56,7 +56,7 @@ export async function createUser(
   reply: FastifyReply,
 ): Promise<void> {
   const result = await create(request.body);
-  reply.code(201).type('application/json').send({
+  return reply.code(201).type('application/json').send({
     code: 201,
     success: true,
     message: 'User Created',
@@ -79,7 +79,7 @@ export async function updateUser(
   reply: FastifyReply,
 ): Promise<void> {
   const result = await update(request.body, request.params);
-  reply.code(200).type('application/json').send({
+  return reply.code(200).type('application/json').send({
     code: 200,
     success: true,
     message: 'User Updated',
@@ -101,7 +101,7 @@ export async function removeUser(
   reply: FastifyReply,
 ): Promise<void> {
   const result = await destroy(request.params);
-  reply.code(200).type('application/json').send({
+  return reply.code(200).type('application/json').send({
     code: 200,
     success: true,
     message: 'User Removed',

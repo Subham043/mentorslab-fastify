@@ -19,7 +19,7 @@ export async function signin(user: LoginBody): Promise<AuthType> {
 
   delete userByEmail['password'];
 
-  const token = app.jwt.sign({ userByEmail });
+  const token = app.jwt.sign({ ...userByEmail });
   return {
     ...userByEmail,
     access_token: token,

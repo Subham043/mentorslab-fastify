@@ -40,3 +40,16 @@ export class CustomInvalidRequestError {
     };
   }
 }
+
+export class CustomUnauthorizedError {
+  readonly statusCode = 401;
+  readonly success = false;
+  readonly message = 'UnAuthorized';
+  constructor() {
+    throw {
+      statusCode: this.statusCode,
+      success: this.success,
+      message: this.message,
+    };
+  }
+}

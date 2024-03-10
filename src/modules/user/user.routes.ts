@@ -6,9 +6,9 @@ import { updateUserJsonSchema } from './schemas/update.schema';
 import { getUserQueryJsonSchema } from './schemas/pagination_query.schema';
 
 export async function userRoutes(app: FastifyInstance) {
-  app.get('/', { schema: getUserQueryJsonSchema }, listUsers);
-  app.get('/:id', { schema: getUserJsonSchema }, getUser);
-  app.post('/', { schema: createUserJsonSchema }, createUser);
-  app.put('/:id', { schema: updateUserJsonSchema }, updateUser);
-  app.delete('/:id', { schema: getUserJsonSchema }, removeUser);
+  app.get('/', { schema: getUserQueryJsonSchema, preHandler: app.verifyJwt }, listUsers);
+  app.get('/:id', { schema: getUserJsonSchema, preHandler: app.verifyJwt }, getUser);
+  app.post('/', { schema: createUserJsonSchema, preHandler: app.verifyJwt }, createUser);
+  app.put('/:id', { schema: updateUserJsonSchema, preHandler: app.verifyJwt }, updateUser);
+  app.delete('/:id', { schema: getUserJsonSchema, preHandler: app.verifyJwt }, removeUser);
 }
