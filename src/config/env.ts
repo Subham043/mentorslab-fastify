@@ -14,6 +14,10 @@ const env = zennv({
     MYSQL_DATABASE: z.string(),
     MYSQL_USER: z.string(),
     MYSQL_PASSWORD: z.string(),
+    MAIL_HOST: z.string(),
+    MAIL_PORT: z.number(),
+    MAIL_USERNAME: z.string(),
+    MAIL_PASSWORD: z.string(),
   }),
 });
 

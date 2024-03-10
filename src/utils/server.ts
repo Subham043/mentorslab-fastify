@@ -2,11 +2,21 @@ import fastify from 'fastify';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import bcrypt from 'fastify-bcrypt';
+import mailer from 'fastify-mailer';
 import fastifyRequestLogger from '@mgcrea/fastify-request-logger';
 import { logger } from './logger';
 import { corsOptions } from '../constants/corsOptions';
 import { helmetOptions } from '../constants/helmetOptions';
 import { userRoutes } from '../modules/user/user.routes';
+import { mailOptions } from '../constants/mailOptions';
+import { FastifyMailType } from '../@types/mail.type';
+
+declare module 'fastify' {
+  interface FastifyInstance {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mailer: FastifyMailType;
+  }
+}
 
 export async function buildServer() {
   const server = await fastify({
@@ -46,6 +56,8 @@ export async function buildServer() {
   });
 
   await server.register(fastifyRequestLogger);
+
+  await server.register(mailer, mailOptions);
 
   await server.register(cors, corsOptions);
 

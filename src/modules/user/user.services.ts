@@ -17,6 +17,7 @@ import { UserType } from '../../@types/user.type';
 import { GetUserQuery } from './schemas/pagination_query.schema';
 import { getPaginationKeys, getPaginationParams } from '../../utils/pagination';
 import { PaginationType } from '../../@types/pagination.type';
+import { logger } from '../../utils/logger';
 
 /**
  * Create a new user with the provided user information.
@@ -48,7 +49,23 @@ export async function create(user: CreateUserBody): Promise<UserType> {
       email: 'Phone is taken',
     });
   }
-  return await createUser(data);
+  const userData = await createUser(data);
+  app.mailer.sendMail(
+    {
+      to: userData.email,
+      subject: 'example',
+      text: 'hello world !',
+    },
+    (errors, info) => {
+      if (errors) {
+        logger.error(errors);
+      }
+      if (info) {
+        logger.info(info);
+      }
+    },
+  );
+  return userData;
 }
 
 /**
