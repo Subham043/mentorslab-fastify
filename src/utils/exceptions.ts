@@ -44,7 +44,7 @@ export class CustomInvalidRequestError {
 export class CustomUnauthorizedError {
   readonly statusCode = 401;
   readonly success = false;
-  readonly message = 'UnAuthorized';
+  readonly message = 'Unauthorized';
   constructor() {
     throw {
       statusCode: this.statusCode,
