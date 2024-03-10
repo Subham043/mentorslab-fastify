@@ -15,7 +15,7 @@ import { CreateUserBody } from './schemas/create.schema';
 import { GetUserParam } from './schemas/id_param.schema';
 import { UserType } from '../../@types/user.type';
 import { GetUserQuery } from './schemas/pagination_query.schema';
-import { getPaginationKeys, getPaginationParams } from '../../utils/helper';
+import { getPaginationKeys, getPaginationParams } from '../../utils/pagination';
 import { PaginationType } from '../../@types/pagination.type';
 
 /**
