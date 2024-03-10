@@ -1,29 +1,60 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { CreateUserBody } from './user.schemas';
-import { create } from './user.services';
+import { create, destroy, findById, list, update } from './user.services';
+import { GetUserParam } from './schemas/id_param.schema';
+import { CreateUserBody } from './schemas/create.schema';
+import { UpdateUserBody } from './schemas/update.schema';
+import { GetUserQuery } from './schemas/pagination_query.schema';
 
-export async function listUsers(request: FastifyRequest, reply: FastifyReply) {
+export async function listUsers(
+  request: FastifyRequest<{
+    Querystring: GetUserQuery;
+  }>,
+  reply: FastifyReply,
+) {
+  const result = await list(request.query);
   reply.code(200).send({
     code: 200,
     success: true,
-    message: 'Hello World',
+    message: 'Users Fetched',
+    data: result,
   });
 }
 
-export async function getUser(request: FastifyRequest, reply: FastifyReply) {
+/**
+ * Retrieves a user based on the provided parameters.
+ *
+ * @param {FastifyRequest} request - the request object containing the parameters
+ * @param {FastifyReply} reply - the reply object for sending the response
+ * @return {Promise<void>} a promise resolving to the fetched user data
+ */
+export async function getUser(
+  request: FastifyRequest<{
+    Params: GetUserParam;
+  }>,
+  reply: FastifyReply,
+): Promise<void> {
+  const result = await findById(request.params);
   reply.code(200).send({
     code: 200,
     success: true,
-    message: 'Hello World',
+    message: 'User Fetched',
+    data: result,
   });
 }
 
+/**
+ * Creates a new user using the request body and sends back the result with a 201 status code.
+ *
+ * @param {FastifyRequest} request - the request object containing the user information
+ * @param {FastifyReply} reply - the reply object for sending the response
+ * @return {Promise<void>} A promise that resolves when the user is successfully created
+ */
 export async function createUser(
   request: FastifyRequest<{
     Body: CreateUserBody;
   }>,
   reply: FastifyReply,
-) {
+): Promise<void> {
   const result = await create(request.body);
   reply.code(201).send({
     code: 201,
@@ -31,32 +62,49 @@ export async function createUser(
     message: 'User Created',
     data: result,
   });
-  // try {
-  // } catch (error) {
-  //   if (error) {
-  //     console.log(error);
-  //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  //     // const err = new Error('hello') as any;
-  //     // err.statusCode = 422;
-  //     // err.myCustomError = 'yo yo I am custom';
-  //     // throw err;
-  //   }
-  //   throw error;
-  // }
 }
 
-export async function updateUser(request: FastifyRequest, reply: FastifyReply) {
+/**
+ * Update user information based on the request body and parameters.
+ *
+ * @param {FastifyRequest} request - The request object containing the body and parameters
+ * @param {FastifyReply} reply - The reply object for sending the response
+ * @return {Promise<void>} A promise that resolves when the user is successfully updated
+ */
+export async function updateUser(
+  request: FastifyRequest<{
+    Body: UpdateUserBody;
+    Params: GetUserParam;
+  }>,
+  reply: FastifyReply,
+): Promise<void> {
+  const result = await update(request.body, request.params);
   reply.code(200).send({
     code: 200,
     success: true,
-    message: 'Hello World',
+    message: 'User Updated',
+    data: result,
   });
 }
 
-export async function removeUser(request: FastifyRequest, reply: FastifyReply) {
+/**
+ * Remove a user based on the request parameter.
+ *
+ * @param {FastifyRequest<{ Params: GetUserParam }>} request - The request object containing user parameters
+ * @param {FastifyReply} reply - The reply object for sending the response
+ * @return {Promise<void>} A promise that resolves after removing the user
+ */
+export async function removeUser(
+  request: FastifyRequest<{
+    Params: GetUserParam;
+  }>,
+  reply: FastifyReply,
+): Promise<void> {
+  const result = await destroy(request.params);
   reply.code(200).send({
     code: 200,
     success: true,
-    message: 'Hello World',
+    message: 'User Removed',
+    data: result,
   });
 }

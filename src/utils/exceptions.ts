@@ -13,3 +13,16 @@ export class CustomInputValidationError {
     };
   }
 }
+
+export class CustomNotFoundError {
+  readonly statusCode = 404;
+  readonly success = false;
+  readonly message = 'Not Found';
+  constructor() {
+    throw {
+      statusCode: this.statusCode,
+      success: this.success,
+      message: this.message,
+    };
+  }
+}
